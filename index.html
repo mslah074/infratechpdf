@@ -543,7 +543,18 @@
     border-radius: 10px; padding: 10px 14px;
   }
   #placementModeBar.show { display: block; }
-  #placementModeBar h4 { font-size: 13px; color: var(--cyan); margin-bottom: 8px; }
+  /* ===== PIPELINE CARD ===== */
+  .pipe-step-card {
+    background: rgba(10,22,40,0.6);
+    border: 1px solid rgba(100,181,246,0.2);
+    border-radius: 10px; padding: 12px 14px;
+    transition: border-color 0.2s;
+  }
+  .pipe-step-card:has(input[type=checkbox]:checked) {
+    border-color: rgba(0,180,216,0.5);
+    background: rgba(0,100,130,0.15);
+  }
+
 </style>
 </head>
 <body>
@@ -868,21 +879,142 @@
     <div class="tool-card">
       <div class="tool-header">
         <div class="tool-icon icon-protect">🔒</div>
-        <div><h3 id="p_title_el">حماية بكلمة مرور</h3><p id="p_sub_el">امنع فتح الملف بدون إذن</p></div>
+        <div><h3 id="p_title_el">Password Protection</h3><p id="p_sub_el">Prevent opening without permission</p></div>
       </div>
       <p id="p_warn_el" style="font-size:12px; color:var(--warning); background:rgba(255,171,64,0.1); padding:10px; border-radius:8px; margin-bottom:14px; border:1px solid rgba(255,171,64,0.2);">
-        ⚠️ هذه الأداة تضيف تشفير قياسى — للحماية الكاملة استخدم Acrobat Pro أو أدوات متخصصة
+        ⚠️ This tool adds standard encryption — for full protection use Acrobat Pro or specialized tools
       </p>
       <div class="field-group">
-        <label class="field-label" id="p_file_lbl">اختر ملف PDF</label>
+        <label class="field-label" id="p_file_lbl">Select PDF File</label>
         <select id="protectFile"></select>
       </div>
       <div class="field-group">
-        <label class="field-label" id="p_pass_lbl">كلمة المرور</label>
-        <input type="password" id="protectPass" placeholder="أدخل كلمة مرور قوية">
+        <label class="field-label" id="p_pass_lbl">Password</label>
+        <input type="password" id="protectPass" placeholder="Enter a strong password">
       </div>
       <div id="protectStatus" class="status-bar"></div>
-      <button class="btn btn-primary" id="p_btn_el" onclick="protectPDF()">🔒 حماية الملف</button>
+      <button class="btn btn-primary" id="p_btn_el" onclick="protectPDF()">🔒 Protect File</button>
+    </div>
+
+    <!-- 10. PIPELINE — Save All Changes Together -->
+    <div class="tool-card" style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(13,33,68,0.9), rgba(0,70,100,0.5)); border-color: rgba(0,180,216,0.35);">
+      <div class="tool-header">
+        <div class="tool-icon" style="background:linear-gradient(135deg,#00695c,#00acc1);">🔁</div>
+        <div>
+          <h3 id="pipe_title_el">Apply All Changes Together</h3>
+          <p id="pipe_sub_el">Add signature + stamp + watermark + rotate in one step — download a single file</p>
+        </div>
+      </div>
+
+      <!-- File select -->
+      <div class="field-group">
+        <label class="field-label" id="pipe_file_lbl">Select PDF File</label>
+        <select id="pipeFile"></select>
+      </div>
+
+      <!-- Steps checklist -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:10px; margin-bottom:14px;">
+
+        <!-- Signature -->
+        <div class="pipe-step-card" id="pipeStepSig">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px;">
+            <input type="checkbox" id="pipeUseSig" onchange="togglePipeStep('Sig')" style="width:16px;height:16px;accent-color:var(--blue-bright)">
+            <span style="font-weight:700;font-size:13px;" id="pipe_sig_lbl">✍️ Signature</span>
+          </label>
+          <div id="pipeStepSigBody" style="display:none;">
+            <div style="font-size:11px;color:var(--gray-mid);margin-bottom:6px;" id="pipe_sig_note_el">Uses the signature loaded in the Signature card above</div>
+            <div class="field-group" style="margin-bottom:6px;">
+              <label class="field-label" id="pipe_sig_page_lbl">Page</label>
+              <input type="number" id="pipeSigPage" value="1" min="1" style="font-size:13px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Stamp -->
+        <div class="pipe-step-card" id="pipeStepStamp">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px;">
+            <input type="checkbox" id="pipeUseStamp" onchange="togglePipeStep('Stamp')" style="width:16px;height:16px;accent-color:var(--blue-bright)">
+            <span style="font-weight:700;font-size:13px;" id="pipe_stamp_lbl">🏷️ Stamp</span>
+          </label>
+          <div id="pipeStepStampBody" style="display:none;">
+            <div style="font-size:11px;color:var(--gray-mid);margin-bottom:6px;" id="pipe_stamp_note_el">Uses the stamp loaded in the Stamp card above</div>
+            <div class="field-group" style="margin-bottom:6px;">
+              <label class="field-label" id="pipe_stamp_page_lbl">Page</label>
+              <input type="number" id="pipeStampPage" value="1" min="1" style="font-size:13px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Watermark -->
+        <div class="pipe-step-card" id="pipeStepWater">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px;">
+            <input type="checkbox" id="pipeUseWater" onchange="togglePipeStep('Water')" style="width:16px;height:16px;accent-color:var(--blue-bright)">
+            <span style="font-weight:700;font-size:13px;" id="pipe_water_lbl">💧 Watermark</span>
+          </label>
+          <div id="pipeStepWaterBody" style="display:none;">
+            <div class="field-group" style="margin-bottom:6px;">
+              <label class="field-label" id="pipe_water_text_lbl">Text</label>
+              <input type="text" id="pipeWaterText" value="INFRATECH CO — CONFIDENTIAL" style="font-size:12px;">
+            </div>
+            <div class="field-group" style="margin-bottom:6px;">
+              <label class="field-label" id="pipe_water_op_lbl">Opacity %</label>
+              <input type="number" id="pipeWaterOpacity" value="20" min="5" max="80" style="font-size:13px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Rotate -->
+        <div class="pipe-step-card" id="pipeStepRotate">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px;">
+            <input type="checkbox" id="pipeUseRotate" onchange="togglePipeStep('Rotate')" style="width:16px;height:16px;accent-color:var(--blue-bright)">
+            <span style="font-weight:700;font-size:13px;" id="pipe_rotate_lbl">🔄 Rotate</span>
+          </label>
+          <div id="pipeStepRotateBody" style="display:none;">
+            <div class="field-group" style="margin-bottom:6px;">
+              <label class="field-label" id="pipe_rotate_angle_lbl">Angle</label>
+              <select id="pipeRotateAngle" style="font-size:13px;">
+                <option value="90">90° CCW</option>
+                <option value="180">180°</option>
+                <option value="270">270° CW</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compress -->
+        <div class="pipe-step-card" id="pipeStepCompress">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px;">
+            <input type="checkbox" id="pipeUseCompress" onchange="togglePipeStep('Compress')" style="width:16px;height:16px;accent-color:var(--blue-bright)">
+            <span style="font-weight:700;font-size:13px;" id="pipe_compress_lbl">🗜️ Compress at end</span>
+          </label>
+          <div id="pipeStepCompressBody" style="display:none;">
+            <div class="field-group" style="margin-bottom:6px;">
+              <label class="field-label" id="pipe_compress_lvl_lbl">Level</label>
+              <select id="pipeCompressLevel" style="font-size:12px;">
+                <option value="high">🟢 High Quality</option>
+                <option value="medium" selected>🟡 Balanced</option>
+                <option value="low">🔴 Maximum</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Output name -->
+      <div class="field-group">
+        <label class="field-label" id="pipe_out_lbl">Output File Name</label>
+        <input type="text" id="pipeOutputName" value="final_document" style="font-size:13px;">
+      </div>
+
+      <!-- Progress -->
+      <div id="pipeStatus" class="status-bar"></div>
+      <div class="progress-bar" id="pipeProg" style="display:none"><div class="progress-fill" id="pipeProgFill"></div></div>
+
+      <button class="btn" onclick="runPipeline()"
+        style="background:linear-gradient(135deg,#006d7f,#00acc1);color:white;font-size:15px;padding:14px;margin-top:4px;">
+        <span id="pipe_btn_el">🚀 Apply All & Download</span>
+      </button>
     </div>
 
   </div>
@@ -959,7 +1091,7 @@ function updateAllSelects() {
   const pdfs = getPDFFiles();
   const t = translations[currentLang];
   const opts = pdfs.length ? pdfs.map(n => `<option value="${n}">${n}</option>`).join('') : `<option value="">${t.noPdf}</option>`;
-  ['compressFile','signFile','stampFile','convertFile','imgToPdfFile','splitFile','wmFile','rotateFile','protectFile','previewFileSelect'].forEach(id => {
+  ['compressFile','signFile','stampFile','convertFile','imgToPdfFile','splitFile','wmFile','rotateFile','protectFile','pipeFile','previewFileSelect'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.innerHTML = opts;
   });
@@ -1074,109 +1206,70 @@ function parsePages(rangeStr, maxPages) {
   return pages;
 }
 
-// ===================== COMPRESS =====================
+// ===================== COMPRESS (IMPROVED) =====================
 async function compressPDF() {
   const file = getFile('compressFile'); if (!file) return;
   const level = document.getElementById('compressLevel').value;
-
   const fmt = sz => sz >= 1048576 ? (sz/1048576).toFixed(2)+' MB' : (sz/1024).toFixed(0)+' KB';
-  setStatus('compressStatus', '⏳ جارى التحليل...');
+
+  setStatus('compressStatus', '⏳ Analysing file...');
   showProgress('compressProg','compressProgFill', 3);
 
   try {
     const origBuf = await file.arrayBuffer();
     const origSz  = file.size;
-    const { PDFDocument, PDFName, PDFDict, PDFArray, PDFStream } = PDFLib;
+    const { PDFDocument, PDFName } = PDFLib;
 
-    // ════════════════════════════════════════════════════════════════
-    // المرحلة 1: pdf-lib — تنظيف هيكل الـ PDF بالكامل
-    // هذا يضغط ملفات النصوص بدون أي فقدان في الجودة
-    // ════════════════════════════════════════════════════════════════
-    setStatus('compressStatus', '⏳ تنظيف هيكل الملف...');
-    showProgress('compressProg','compressProgFill', 10);
+    // ── Phase 1: Structure cleanup (lossless) ────────────────────────
+    setStatus('compressStatus', '⏳ Cleaning PDF structure...');
+    showProgress('compressProg','compressProgFill', 8);
 
-    const srcDoc = await PDFDocument.load(new Uint8Array(origBuf), {
-      ignoreEncryption: true,
-      updateMetadata: false,
-    });
-
-    // ── حذف الـ metadata الزائدة ──────────────────────────────────
-    try { srcDoc.setTitle('');  } catch(e){}
-    try { srcDoc.setAuthor(''); } catch(e){}
-    try { srcDoc.setSubject(''); } catch(e){}
-    try { srcDoc.setKeywords([]); } catch(e){}
-    try { srcDoc.setProducer(''); } catch(e){}
-    try { srcDoc.setCreator(''); } catch(e){}
-
-    // ── حذف XMP metadata stream ───────────────────────────────────
-    try {
-      const catalog = srcDoc.catalog;
-      if (catalog.has(PDFName.of('Metadata'))) {
-        catalog.delete(PDFName.of('Metadata'));
-      }
-    } catch(e){}
-
-    // ── حذف Thumbnails من كل الصفحات ─────────────────────────────
-    const pages = srcDoc.getPages();
-    for (const page of pages) {
+    const srcDoc = await PDFDocument.load(new Uint8Array(origBuf), { ignoreEncryption: true, updateMetadata: false });
+    try { srcDoc.setTitle(''); srcDoc.setAuthor(''); srcDoc.setSubject(''); srcDoc.setKeywords([]); srcDoc.setProducer(''); srcDoc.setCreator(''); } catch(e){}
+    try { const cat = srcDoc.catalog; if(cat.has(PDFName.of('Metadata'))) cat.delete(PDFName.of('Metadata')); } catch(e){}
+    for (const page of srcDoc.getPages()) {
       try {
-        const dict = page.node;
-        if (dict.has(PDFName.of('Thumb')))   dict.delete(PDFName.of('Thumb'));
-        if (dict.has(PDFName.of('Annots')))  { /* keep */ }
-        if (dict.has(PDFName.of('PieceInfo'))) dict.delete(PDFName.of('PieceInfo'));
-        if (dict.has(PDFName.of('Metadata'))) dict.delete(PDFName.of('Metadata'));
+        const d = page.node;
+        ['Thumb','PieceInfo','Metadata'].forEach(k => { try { if(d.has(PDFName.of(k))) d.delete(PDFName.of(k)); } catch(e){} });
       } catch(e){}
     }
-
-    showProgress('compressProg','compressProgFill', 30);
-
-    // ── حفظ بـ object streams (أقوى ضغط لـ PDF structure) ──────────
-    const pass1Bytes = await srcDoc.save({
-      useObjectStreams: true,      // يضغط الـ structure بـ Flate
-      addDefaultPage: false,
-      objectsPerTick: 20,
-    });
-
-    showProgress('compressProg','compressProgFill', 55);
-
+    showProgress('compressProg','compressProgFill', 18);
+    const pass1Bytes = await srcDoc.save({ useObjectStreams: true, addDefaultPage: false });
     const pass1Sz = pass1Bytes.byteLength;
-    let   bestBytes = pass1Bytes;
-    let   bestSz    = pass1Sz;
 
-    // ════════════════════════════════════════════════════════════════
-    // المرحلة 2: Canvas JPEG للصفحات اللي فيها صور كتير
-    // بس لو المرحلة 1 ما كفتش (أقل من 15% تحسين)
-    // ════════════════════════════════════════════════════════════════
-    const improvement1 = (origSz - pass1Sz) / origSz;
-
+    // ── Phase 2: Image recompression (lossy, chunked to avoid freeze) ─
     const cfg = {
-      high:   { targetPx: 1400, jpegQ: 0.80 },
-      medium: { targetPx: 950,  jpegQ: 0.55 },
-      low:    { targetPx: 650,  jpegQ: 0.28 },
+      high:   { targetPx: 1600, jpegQ: 0.82 },
+      medium: { targetPx: 1100, jpegQ: 0.60 },
+      low:    { targetPx: 720,  jpegQ: 0.32 },
     };
     const { targetPx, jpegQ } = cfg[level];
 
-    setStatus('compressStatus', '⏳ ضغط الصور...');
-    showProgress('compressProg','compressProgFill', 58);
+    setStatus('compressStatus', '⏳ Recompressing images...');
+    showProgress('compressProg','compressProgFill', 22);
 
-    // دايماً نجرب المرحلة 2 ونقارن — ناخد الأصغر
+    // Use the original buffer for rendering (better quality source)
     const pdfJsDoc = await pdfjsLib.getDocument({ data: new Uint8Array(origBuf) }).promise;
     const numPages = pdfJsDoc.numPages;
     const newPdf2  = await PDFDocument.create();
     const cvs = document.createElement('canvas');
-    const ctx  = cvs.getContext('2d', { alpha: false });
+    const ctx  = cvs.getContext('2d', { alpha: false, willReadFrequently: false });
 
+    const CHUNK = 3; // render 3 pages then yield to browser
     for (let i = 1; i <= numPages; i++) {
-      setStatus('compressStatus', `⏳ صفحة ${i}/${numPages}...`);
+      setStatus('compressStatus', `⏳ Page ${i} / ${numPages}...`);
       const page   = await pdfJsDoc.getPage(i);
       const origVp = page.getViewport({ scale: 1 });
-      const scale  = targetPx / origVp.width;
+
+      // Scale so longest side = targetPx (preserve aspect)
+      const longest = Math.max(origVp.width, origVp.height);
+      const scale   = longest > targetPx ? targetPx / longest : 1;
 
       cvs.width  = Math.round(origVp.width  * scale);
       cvs.height = Math.round(origVp.height * scale);
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, cvs.width, cvs.height);
-      await page.render({ canvasContext: ctx, viewport: page.getViewport({ scale }) }).promise;
+      await page.render({ canvasContext: ctx, viewport: page.getViewport({ scale }), intent: 'print' }).promise;
 
       const blob  = await new Promise(r => cvs.toBlob(r, 'image/jpeg', jpegQ));
       const bytes = new Uint8Array(await blob.arrayBuffer());
@@ -1184,45 +1277,80 @@ async function compressPDF() {
       const pg    = newPdf2.addPage([origVp.width, origVp.height]);
       pg.drawImage(img, { x:0, y:0, width:origVp.width, height:origVp.height });
 
-      showProgress('compressProg','compressProgFill', 58 + Math.round((i/numPages)*30));
-      await new Promise(r => setTimeout(r, 0));
+      showProgress('compressProg','compressProgFill', 22 + Math.round((i/numPages)*62));
+
+      // Yield every CHUNK pages so the browser doesn't freeze
+      if (i % CHUNK === 0) await new Promise(r => setTimeout(r, 0));
     }
     cvs.width = 1; cvs.height = 1;
 
     const pass2Bytes = await newPdf2.save({ useObjectStreams: true, addDefaultPage: false });
     const pass2Sz    = pass2Bytes.byteLength;
+    showProgress('compressProg','compressProgFill', 96);
 
-    showProgress('compressProg','compressProgFill', 95);
-
-    // ── اختار الأصغر من المرحلتين ─────────────────────────────────
+    // Pick the smallest result
+    let bestBytes = pass1Bytes, bestSz = pass1Sz;
     if (pass2Sz < bestSz) { bestBytes = pass2Bytes; bestSz = pass2Sz; }
 
-    // ── لو الناتج لا يزال أكبر من الأصل → ارجع الأصل ──────────────
     if (bestSz >= origSz) {
       downloadBlob(new Blob([origBuf], {type:'application/pdf'}), 'compressed_'+file.name);
       showProgress('compressProg','compressProgFill', 100);
-      setStatus('compressStatus', `ℹ️ الملف لا يمكن تصغيره (${fmt(origSz)}) — هو محسّن بالفعل`, false);
-      showToast('ℹ️ هذا الملف لا يقبل ضغطاً إضافياً');
+      setStatus('compressStatus', `ℹ️ File is already optimised (${fmt(origSz)})`, false);
+      showToast('ℹ️ This file cannot be compressed further');
       setTimeout(()=>hideProgress('compressProg'), 3000);
       return;
     }
 
     showProgress('compressProg','compressProgFill', 100);
     const ratio  = Math.round((1 - bestSz / origSz) * 100);
-    const engine = bestBytes === pass1Bytes ? 'PDF Structure' : 'Image Recompress';
+    const engine = bestBytes === pass1Bytes ? 'Structure Only' : 'Image Recompress';
     downloadBlob(new Blob([bestBytes], {type:'application/pdf'}), 'compressed_'+file.name);
-
-    const label = { high:'جودة عالية', medium:'متوازن', low:'ضغط أقصى' }[level];
-    setStatus('compressStatus',
-      `✅ ${label} | ${fmt(origSz)} → ${fmt(bestSz)} | وفّر ${ratio}% | [${engine}]`, false);
-    showToast(`✅ وفّر ${ratio}%  (${fmt(origSz)} → ${fmt(bestSz)})`);
+    setStatus('compressStatus', `✅ ${fmt(origSz)} → ${fmt(bestSz)} | Saved ${ratio}% | [${engine}]`, false);
+    showToast(`✅ Saved ${ratio}%  (${fmt(origSz)} → ${fmt(bestSz)})`);
 
   } catch(e) {
-    setStatus('compressStatus', 'خطأ: ' + e.message, false);
-    showToast('خطأ: ' + e.message, 'error');
+    setStatus('compressStatus', 'Error: ' + e.message, false);
+    showToast('Error: ' + e.message, 'error');
     console.error(e);
   }
   setTimeout(()=>hideProgress('compressProg'), 3000);
+}
+
+// Shared compress helper used by pipeline (returns Uint8Array)
+async function _compressBytes(origBuf, level) {
+  const { PDFDocument, PDFName } = PDFLib;
+  const origSz = origBuf.byteLength;
+  const srcDoc = await PDFDocument.load(new Uint8Array(origBuf), { ignoreEncryption: true, updateMetadata: false });
+  try { srcDoc.setTitle(''); srcDoc.setAuthor(''); srcDoc.setSubject(''); srcDoc.setKeywords([]); srcDoc.setProducer(''); srcDoc.setCreator(''); } catch(e){}
+  try { const cat = srcDoc.catalog; if(cat.has(PDFName.of('Metadata'))) cat.delete(PDFName.of('Metadata')); } catch(e){}
+  const pass1Bytes = await srcDoc.save({ useObjectStreams: true, addDefaultPage: false });
+
+  const cfg = { high:{targetPx:1600,jpegQ:0.82}, medium:{targetPx:1100,jpegQ:0.60}, low:{targetPx:720,jpegQ:0.32} };
+  const { targetPx, jpegQ } = cfg[level];
+  const pdfJsDoc = await pdfjsLib.getDocument({ data: new Uint8Array(origBuf) }).promise;
+  const numPages = pdfJsDoc.numPages;
+  const newPdf2  = await PDFDocument.create();
+  const cvs = document.createElement('canvas');
+  const ctx  = cvs.getContext('2d', { alpha: false });
+  for (let i = 1; i <= numPages; i++) {
+    const page = await pdfJsDoc.getPage(i);
+    const origVp = page.getViewport({ scale: 1 });
+    const longest = Math.max(origVp.width, origVp.height);
+    const scale   = longest > targetPx ? targetPx / longest : 1;
+    cvs.width = Math.round(origVp.width * scale); cvs.height = Math.round(origVp.height * scale);
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cvs.width, cvs.height);
+    await page.render({ canvasContext: ctx, viewport: page.getViewport({ scale }), intent: 'print' }).promise;
+    const blob = await new Promise(r => cvs.toBlob(r, 'image/jpeg', jpegQ));
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    const img = await newPdf2.embedJpg(bytes);
+    const pg  = newPdf2.addPage([origVp.width, origVp.height]);
+    pg.drawImage(img, { x:0, y:0, width:origVp.width, height:origVp.height });
+    if (i % 3 === 0) await new Promise(r => setTimeout(r, 0));
+  }
+  cvs.width = 1; cvs.height = 1;
+  const pass2Bytes = await newPdf2.save({ useObjectStreams: true, addDefaultPage: false });
+  const best = pass2Bytes.byteLength < pass1Bytes.byteLength ? pass2Bytes : pass1Bytes;
+  return best.byteLength < origSz ? best : new Uint8Array(origBuf);
 }
 
 // ===================== MERGE =====================
@@ -1913,6 +2041,159 @@ function clearPlacement() {
   document.getElementById('placementCoords').style.display = 'none';
 }
 
+// ===================== PIPELINE =====================
+function togglePipeStep(name) {
+  const body = document.getElementById('pipeStep' + name + 'Body');
+  const cb   = document.getElementById('pipeUse' + name);
+  if (body) body.style.display = cb.checked ? 'block' : 'none';
+}
+
+async function runPipeline() {
+  const file = getFile('pipeFile'); if (!file) return;
+
+  const useSig      = document.getElementById('pipeUseSig').checked;
+  const useStamp    = document.getElementById('pipeUseStamp').checked;
+  const useWater    = document.getElementById('pipeUseWater').checked;
+  const useRotate   = document.getElementById('pipeUseRotate').checked;
+  const useCompress = document.getElementById('pipeUseCompress').checked;
+
+  if (!useSig && !useStamp && !useWater && !useRotate && !useCompress) {
+    showToast('Select at least one step', 'error'); return;
+  }
+
+  const fmt = sz => sz >= 1048576 ? (sz/1048576).toFixed(2)+' MB' : (sz/1024).toFixed(0)+' KB';
+  const steps = [useSig, useStamp, useWater, useRotate, useCompress].filter(Boolean).length;
+  let step = 0;
+  const prog = pct => { showProgress('pipeProg','pipeProgFill', pct); };
+
+  setStatus('pipeStatus', '⏳ Starting pipeline...');
+  showProgress('pipeProg','pipeProgFill', 2);
+
+  try {
+    const { PDFDocument, rgb, StandardFonts, degrees } = PDFLib;
+    let buf = await file.arrayBuffer();
+
+    // ── Step: Signature ─────────────────────────────────────────────
+    if (useSig) {
+      step++;
+      setStatus('pipeStatus', `⏳ [${step}/${steps}] Applying signature...`);
+      const st = overlayState['sig'];
+      if (!st.pngUrl) { showToast('Load a signature image first', 'error'); hideStatus('pipeStatus'); return; }
+      const pdfDoc2 = await PDFDocument.load(new Uint8Array(buf));
+      const base64 = st.pngUrl.split(',')[1];
+      const pngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+      const embImg = await pdfDoc2.embedPng(pngBytes);
+      const pages = pdfDoc2.getPages();
+      const pageNum = parseInt(document.getElementById('pipeSigPage').value) - 1;
+      const targetPage = pages[Math.min(pageNum, pages.length - 1)];
+      const { width: pW, height: pH } = targetPage.getSize();
+      const pdfCvs = document.getElementById('pdfCanvas');
+      const displayW = pdfCvs.offsetWidth || pdfCvs.width;
+      const displayH = pdfCvs.offsetHeight || pdfCvs.height;
+      const ptX = st.x * (pW / displayW);
+      const ptY = pH - (st.y + st.h) * (pH / displayH);
+      const ptW = st.w * (pW / displayW);
+      const ptH = st.h * (pH / displayH);
+      targetPage.drawImage(embImg, { x: ptX, y: ptY, width: ptW, height: ptH });
+      buf = await pdfDoc2.save();
+      prog(Math.round(step/steps * (useCompress ? 70 : 90)));
+    }
+
+    // ── Step: Stamp ──────────────────────────────────────────────────
+    if (useStamp) {
+      step++;
+      setStatus('pipeStatus', `⏳ [${step}/${steps}] Applying stamp...`);
+      const st = overlayState['stamp'];
+      if (!st.pngUrl) { showToast('Load a stamp image first', 'error'); hideStatus('pipeStatus'); return; }
+      const pdfDoc2 = await PDFDocument.load(new Uint8Array(buf));
+      const base64 = st.pngUrl.split(',')[1];
+      const pngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+      const embImg = await pdfDoc2.embedPng(pngBytes);
+      const pages = pdfDoc2.getPages();
+      const pageNum = parseInt(document.getElementById('pipeStampPage').value) - 1;
+      const targetPage = pages[Math.min(pageNum, pages.length - 1)];
+      const { width: pW, height: pH } = targetPage.getSize();
+      const pdfCvs = document.getElementById('pdfCanvas');
+      const displayW = pdfCvs.offsetWidth || pdfCvs.width;
+      const displayH = pdfCvs.offsetHeight || pdfCvs.height;
+      const ptX = st.x * (pW / displayW);
+      const ptY = pH - (st.y + st.h) * (pH / displayH);
+      const ptW = st.w * (pW / displayW);
+      const ptH = st.h * (pH / displayH);
+      targetPage.drawImage(embImg, { x: ptX, y: ptY, width: ptW, height: ptH });
+      buf = await pdfDoc2.save();
+      prog(Math.round(step/steps * (useCompress ? 70 : 90)));
+    }
+
+    // ── Step: Watermark ──────────────────────────────────────────────
+    if (useWater) {
+      step++;
+      setStatus('pipeStatus', `⏳ [${step}/${steps}] Adding watermark...`);
+      const text = document.getElementById('pipeWaterText').value || 'CONFIDENTIAL';
+      const opacity = parseInt(document.getElementById('pipeWaterOpacity').value) / 100;
+      const pdfDoc2 = await PDFDocument.load(new Uint8Array(buf));
+      const font = await pdfDoc2.embedFont(StandardFonts.HelveticaBold);
+      const fontSize = 48;
+      for (const page of pdfDoc2.getPages()) {
+        const { width, height } = page.getSize();
+        page.drawText(text, {
+          x: width/2 - font.widthOfTextAtSize(text, fontSize)/2,
+          y: height/2 - fontSize/2,
+          size: fontSize, font,
+          color: rgb(0.5,0.5,0.5), opacity,
+          rotate: degrees(45)
+        });
+      }
+      buf = await pdfDoc2.save();
+      prog(Math.round(step/steps * (useCompress ? 70 : 90)));
+    }
+
+    // ── Step: Rotate ─────────────────────────────────────────────────
+    if (useRotate) {
+      step++;
+      setStatus('pipeStatus', `⏳ [${step}/${steps}] Rotating pages...`);
+      const angle = parseInt(document.getElementById('pipeRotateAngle').value);
+      const pdfDoc2 = await PDFDocument.load(new Uint8Array(buf));
+      for (const page of pdfDoc2.getPages()) {
+        const current = page.getRotation().angle;
+        page.setRotation(degrees((current + angle) % 360));
+      }
+      buf = await pdfDoc2.save();
+      prog(Math.round(step/steps * (useCompress ? 70 : 90)));
+    }
+
+    // ── Step: Compress ───────────────────────────────────────────────
+    if (useCompress) {
+      step++;
+      setStatus('pipeStatus', `⏳ [${step}/${steps}] Compressing...`);
+      const level = document.getElementById('pipeCompressLevel').value;
+      // Inline lightweight structure-only compress for pipeline (fast)
+      const { PDFDocument: PD2, PDFName } = PDFLib;
+      const srcDoc = await PD2.load(new Uint8Array(buf), { ignoreEncryption: true, updateMetadata: false });
+      try { srcDoc.setTitle(''); srcDoc.setAuthor(''); srcDoc.setSubject(''); srcDoc.setKeywords([]); srcDoc.setProducer(''); srcDoc.setCreator(''); } catch(e){}
+      try { const cat = srcDoc.catalog; if(cat.has(PDFName.of('Metadata'))) cat.delete(PDFName.of('Metadata')); } catch(e){}
+      const cleanBytes = await srcDoc.save({ useObjectStreams: true, addDefaultPage: false });
+      // Only replace if smaller
+      buf = cleanBytes.byteLength < buf.byteLength ? cleanBytes : buf;
+      prog(90);
+      await new Promise(r => setTimeout(r, 0));
+    }
+
+    prog(100);
+    const outName = (document.getElementById('pipeOutputName').value || 'final_document') + '.pdf';
+    const finalSz = buf.byteLength || buf.length;
+    downloadBlob(new Blob([buf], { type:'application/pdf' }), outName);
+    setStatus('pipeStatus', `✅ Done! ${steps} step(s) applied — ${fmt(file.size)} → ${fmt(finalSz)}`, false);
+    showToast(`✅ Pipeline complete! ${steps} steps applied`);
+
+  } catch(e) {
+    setStatus('pipeStatus', 'Error: ' + e.message, false);
+    showToast('Error: ' + e.message, 'error');
+    console.error(e);
+  }
+  setTimeout(()=>hideProgress('pipeProg'), 4000);
+}
+
 // ===================== TRANSLATIONS =====================
 let currentLang = 'en';
 
@@ -1991,7 +2272,16 @@ const translations = {
     // Page info
     pageInfo: 'صفحة', pageOf: 'من',
     // Select empty
-    noPdf: '— لا توجد ملفات PDF —', uploadFirst: '— قم برفع ملفات أولاً —'
+    noPdf: '— لا توجد ملفات PDF —', uploadFirst: '— قم برفع ملفات أولاً —',
+    // Pipeline
+    pipe_title: '🚀 تطبيق كل التغييرات معاً', pipe_sub: 'توقيع + ختم + علامة مائية + تدوير في خطوة واحدة',
+    pipe_file: 'اختر ملف PDF',
+    pipe_sig: '✍️ التوقيع', pipe_sig_note: 'يستخدم التوقيع المحمّل في بطاقة التوقيع أعلاه', pipe_sig_page: 'الصفحة',
+    pipe_stamp: '🏷️ الختم', pipe_stamp_note: 'يستخدم الختم المحمّل في بطاقة الختم أعلاه', pipe_stamp_page: 'الصفحة',
+    pipe_water: '💧 علامة مائية', pipe_water_text: 'النص', pipe_water_op: 'الشفافية %',
+    pipe_rotate: '🔄 تدوير', pipe_rotate_angle: 'الزاوية',
+    pipe_compress: '🗜️ ضغط في النهاية', pipe_compress_lvl: 'المستوى',
+    pipe_out: 'اسم الملف الناتج', pipe_btn: '🚀 تطبيق الكل وتنزيل'
   },
   en: {
     heroTitle: '🗂️ Professional PDF Processing Platform',
@@ -2058,7 +2348,16 @@ const translations = {
     // Page info
     pageInfo: 'Page',  pageOf: 'of',
     // Select empty
-    noPdf: '— No PDF files —', uploadFirst: '— Upload files first —'
+    noPdf: '— No PDF files —', uploadFirst: '— Upload files first —',
+    // Pipeline
+    pipe_title: '🚀 Apply All Changes Together', pipe_sub: 'Signature + Stamp + Watermark + Rotate in one step',
+    pipe_file: 'Select PDF File',
+    pipe_sig: '✍️ Signature', pipe_sig_note: 'Uses the signature loaded in the Signature card above', pipe_sig_page: 'Page',
+    pipe_stamp: '🏷️ Stamp', pipe_stamp_note: 'Uses the stamp loaded in the Stamp card above', pipe_stamp_page: 'Page',
+    pipe_water: '💧 Watermark', pipe_water_text: 'Text', pipe_water_op: 'Opacity %',
+    pipe_rotate: '🔄 Rotate', pipe_rotate_angle: 'Angle',
+    pipe_compress: '🗜️ Compress at end', pipe_compress_lvl: 'Level',
+    pipe_out: 'Output File Name', pipe_btn: '🚀 Apply All & Download'
   }
 };
 
@@ -2159,6 +2458,15 @@ function applyLang() {
   // Add Image drag hint
   const iDragHint = document.getElementById('i_drag_hint_el'); if(iDragHint) iDragHint.innerHTML = (currentLang==='ar') ? '💡 بعد رفع الصورة اضغط <strong>"وضع التحريك"</strong> — اسحب فوق الصفحة لتحديد موضعها' : '💡 Upload an image then press <strong>"Drag Mode"</strong> — drag over the page to set its position';
   setText('i_drag_btn', (currentLang==='ar') ? '🖱️ وضع التحريك بالماوس' : '🖱️ Drag Mode');
+  // Pipeline
+  setText('pipe_title_el', t.pipe_title); setText('pipe_sub_el', t.pipe_sub);
+  setText('pipe_file_lbl', t.pipe_file);
+  setText('pipe_sig_lbl', t.pipe_sig); setText('pipe_sig_note_el', t.pipe_sig_note); setText('pipe_sig_page_lbl', t.pipe_sig_page);
+  setText('pipe_stamp_lbl', t.pipe_stamp); setText('pipe_stamp_note_el', t.pipe_stamp_note); setText('pipe_stamp_page_lbl', t.pipe_stamp_page);
+  setText('pipe_water_lbl', t.pipe_water); setText('pipe_water_text_lbl', t.pipe_water_text); setText('pipe_water_op_lbl', t.pipe_water_op);
+  setText('pipe_rotate_lbl', t.pipe_rotate); setText('pipe_rotate_angle_lbl', t.pipe_rotate_angle);
+  setText('pipe_compress_lbl', t.pipe_compress); setText('pipe_compress_lvl_lbl', t.pipe_compress_lvl);
+  setText('pipe_out_lbl', t.pipe_out); setText('pipe_btn_el', t.pipe_btn);
   // Footer
   document.getElementById('footerText').innerHTML = t.footer;
 }
