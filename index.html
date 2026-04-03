@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -365,11 +365,119 @@
     border-radius: 50%; background: var(--blue-bright); cursor: pointer;
   }
 
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 600px) {
-    header { padding: 0 16px; }
-    .app-container { padding: 0 12px 40px; }
-    .tools-grid { grid-template-columns: 1fr; }
+  /* ===== RESPONSIVE — FULL MOBILE ===== */
+
+  /* Tablets */
+  @media (max-width: 768px) {
+    header { padding: 0 16px; height: auto; min-height: 64px; flex-wrap: wrap; gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+    .logo-img { height: 36px; }
+    .logo-text .brand { font-size: 15px; }
+    .logo-text .sub { font-size: 9px; letter-spacing: 2px; }
+    .header-right { gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .dedicated-badge { display: none; }
+    .header-badge { font-size: 10px; padding: 4px 10px; }
+    .lang-toggle { font-size: 12px; padding: 6px 14px; }
+
+    .hero { padding: 30px 16px 20px; }
+    .hero h1 { font-size: clamp(20px, 6vw, 32px); }
+    .hero p { font-size: 13px; }
+
+    .app-container { padding: 0 12px 40px; gap: 16px; }
+    .drop-section { padding: 28px 16px; }
+    .drop-icon { font-size: 36px; }
+    .drop-section h3 { font-size: 15px; }
+
+    .tools-grid { grid-template-columns: 1fr; gap: 14px; }
+    .tool-card { padding: 18px 16px; border-radius: 14px; }
+    .tool-icon { width: 38px; height: 38px; font-size: 18px; border-radius: 10px; }
+    .tool-header h3 { font-size: 14px; }
+    .tool-header p { font-size: 11px; }
+
+    .pos-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .btn { font-size: 13px; padding: 10px; }
+
+    #pdfCanvas { max-height: 380px; }
+    .page-nav { flex-wrap: wrap; gap: 8px; }
+    .page-nav button { font-size: 12px; padding: 6px 10px; }
+
+    .sig-controls { gap: 6px; }
+    .placement-tool-btn { font-size: 11px; padding: 6px 8px; }
+    .coord-badge { font-size: 10px; padding: 3px 7px; }
+  }
+
+  /* Phones */
+  @media (max-width: 480px) {
+    header { padding: 8px 12px; gap: 6px; }
+    .logo-text .brand { font-size: 13px; letter-spacing: 1px; }
+    .logo-text .sub { display: none; }
+    .header-badge { display: none; }
+    .lang-toggle { font-size: 11px; padding: 5px 12px; }
+
+    .hero { padding: 22px 12px 14px; }
+    .hero h1 { font-size: clamp(18px, 7vw, 26px); margin-bottom: 8px; }
+    .hero p { font-size: 12px; }
+
+    .app-container { padding: 0 10px 30px; gap: 12px; }
+    .drop-section { padding: 22px 12px; border-radius: 14px; }
+    .drop-icon { font-size: 30px; margin-bottom: 8px; }
+    .drop-section h3 { font-size: 14px; }
+    .drop-section p { font-size: 11px; }
+    .btn-upload { padding: 8px 20px; font-size: 13px; }
+
+    .file-chip { min-width: unset; flex: 1 1 100%; font-size: 12px; }
+    .file-chip .file-icon { font-size: 18px; }
+
+    .tool-card { padding: 14px 12px; }
+    .tool-header { gap: 10px; margin-bottom: 14px; }
+    .tool-icon { width: 34px; height: 34px; font-size: 16px; }
+    .tool-header h3 { font-size: 13px; }
+    .tool-header p { font-size: 10px; }
+
+    select, input[type="text"], input[type="password"], input[type="number"] {
+      font-size: 14px; /* prevents iOS zoom on focus */
+      padding: 10px 12px;
+    }
+
+    .pos-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .field-group { margin-bottom: 10px; }
+    label.field-label { font-size: 11px; margin-bottom: 4px; }
+
+    .btn { font-size: 14px; padding: 12px; border-radius: 10px; }
+
+    #previewPanel { padding: 14px 12px; border-radius: 14px; }
+    #previewPanel h3 { font-size: 13px; flex-wrap: wrap; gap: 8px; }
+    #previewPanel select { font-size: 12px; }
+    #pdfCanvas { max-height: 300px; }
+
+    .page-nav { gap: 6px; }
+    .page-nav button { font-size: 11px; padding: 6px 10px; }
+    #placementModeToggle { font-size: 11px; padding: 6px 10px; }
+
+    .placement-tool-select { gap: 5px; }
+    .placement-tool-btn { font-size: 10px; padding: 6px 6px; min-width: 0; }
+
+    .sig-wrapper { border-radius: 8px; }
+    #sigCanvas { height: 120px; }
+
+    .color-dot { width: 20px; height: 20px; }
+    .sig-size-row span { font-size: 11px; }
+
+    .wm-opacity-row span { font-size: 10px; }
+
+    footer { padding: 16px 12px; font-size: 11px; }
+
+    /* Fix toast on mobile */
+    #toast { width: 90%; font-size: 13px; padding: 10px 16px; bottom: 20px; }
+
+    /* section title */
+    .section-title span { font-size: 11px; letter-spacing: 1px; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 360px) {
+    .pos-grid { grid-template-columns: 1fr; }
+    .tool-header h3 { font-size: 12px; }
   }
 
   /* ===== IMAGE INSERTION ===== */
@@ -457,8 +565,8 @@
 
 <!-- HERO -->
 <div class="hero">
-  <h1 id="heroTitle">🗂️ منصة معالجة PDF الاحترافية</h1>
-  <p id="heroSub">ارفع ملفاتك وابدأ العمل — الضغط، الدمج، التوقيع، التحويل وأكثر</p>
+  <h1 id="heroTitle">🗂️ Professional PDF Processing Platform</h1>
+  <p id="heroSub">Upload your files and start working — Compress, Merge, Sign, Convert and more</p>
 </div>
 
 <!-- APP -->
@@ -467,9 +575,9 @@
   <!-- DROP ZONE -->
   <div class="drop-section" id="dropZone" onclick="document.getElementById('fileInput').click()">
     <span class="drop-icon">📂</span>
-    <h3 id="dropTitle">ارفع ملفات PDF هنا</h3>
-    <p id="dropSub">اسحب وأفلت أو اضغط للاختيار • يدعم عدة ملفات في نفس الوقت</p>
-    <button class="btn-upload" onclick="event.stopPropagation(); document.getElementById('fileInput').click()"><span id="uploadBtnText">اختار ملفات</span></button>
+    <h3 id="dropTitle">Drop PDF Files Here</h3>
+    <p id="dropSub">Drag & drop or click to select • Multiple files supported</p>
+    <button class="btn-upload" onclick="event.stopPropagation(); document.getElementById('fileInput').click()"><span id="uploadBtnText">Choose Files</span></button>
     <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.webp" style="display:none" onchange="handleFiles(this.files)">
   </div>
 
@@ -519,7 +627,7 @@
   </div>
 
   <!-- TOOLS HEADING -->
-  <div class="section-title"><span id="sectionToolsTitle">✦ الأدوات المتاحة</span></div>
+  <div class="section-title"><span id="sectionToolsTitle">✦ Available Tools</span></div>
 
   <!-- TOOLS GRID -->
   <div class="tools-grid">
